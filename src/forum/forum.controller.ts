@@ -1,9 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
-import { UserService } from './services/user.service';
-import { ForumService } from './services/forum.service';
-import { MessageService } from './services/message.service';
+import { UserService, MessageService, ForumService } from './services';
 
 import * as usersFixtures from '../fixtures/users.json';
 import * as messagesFixtures from '../fixtures/messages.json';
