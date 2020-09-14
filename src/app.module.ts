@@ -6,7 +6,7 @@ import { join } from 'path';
 import { TimeoutInterceptor } from './common';
 import { AppController } from './app.controller';
 import configuration from './config/app.config';
-import { UserModule, MessageModule, ForumModule } from './modules';
+import { ForumModule } from './forum/forum.module';
 import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
 
 @Module({
@@ -24,8 +24,6 @@ import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
     //   inject: [ConfigService],
     // }),
     InMemoryDBModule,
-    UserModule, 
-    MessageModule, 
     ForumModule
   ],
   controllers: [AppController],
