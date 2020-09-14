@@ -6,6 +6,8 @@ import { join } from 'path';
 import { TimeoutInterceptor } from './common';
 import { AppController } from './app.controller';
 import configuration from './config/app.config';
+import { UserModule, MessageModule, ForumModule } from './modules';
+import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
 
 @Module({
   imports: [
@@ -13,14 +15,18 @@ import configuration from './config/app.config';
       isGlobal: true,
       load: [configuration],
     }),
-    GraphQLModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        installSubscriptionHandlers: true,
-        autoSchemaFile: join(process.cwd(), configService.get<string>('graphql.autoSchemaFilePath')),
-      }),
-      inject: [ConfigService],
-    }),
+    // GraphQLModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     installSubscriptionHandlers: true,
+    //     autoSchemaFile: join(process.cwd(), configService.get<string>('graphql.autoSchemaFilePath')),
+    //   }),
+    //   inject: [ConfigService],
+    // }),
+    InMemoryDBModule,
+    UserModule, 
+    MessageModule, 
+    ForumModule
   ],
   controllers: [AppController],
   providers: [

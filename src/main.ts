@@ -33,9 +33,6 @@ async function bootstrap() {
     });
   
     SwaggerModule.setup('api', app, document, {
-      swaggerOptions: {
-        docExpansion: 'none',
-      },
       customCss: ` 
       #swagger-ui div.topbar img {
         display : none;
