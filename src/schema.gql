@@ -1,0 +1,29 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserDto {
+  name: ID!
+  picture: String!
+}
+
+type MessageDto {
+  id: ID!
+  text: String!
+  date: Date!
+  sender: UserDto!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type ForumDto {
+  id: ID!
+  name: String!
+  members: [UserDto!]!
+  messages: [MessageDto!]
+}
+
+type Query {
+  Continents: [ForumDto!]!
+}

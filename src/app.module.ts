@@ -15,16 +15,16 @@ import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
       isGlobal: true,
       load: [configuration],
     }),
-    // GraphQLModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     installSubscriptionHandlers: true,
-    //     autoSchemaFile: join(process.cwd(), configService.get<string>('graphql.autoSchemaFilePath')),
-    //   }),
-    //   inject: [ConfigService],
-    // }),
+    GraphQLModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        installSubscriptionHandlers: true,
+        autoSchemaFile: join(process.cwd(), configService.get<string>('graphql.autoSchemaFilePath')),
+      }),
+      inject: [ConfigService],
+    }),
     InMemoryDBModule,
-    ForumModule
+    ForumModule,
   ],
   controllers: [AppController],
   providers: [
@@ -32,7 +32,7 @@ import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
     },
-    ConfigService
+    ConfigService,
   ],
 })
 export class AppModule {}

@@ -5,6 +5,6 @@ import { ApiExcludeEndpoint } from '@nestjs/swagger';
 export class AppController {
   @ApiExcludeEndpoint()
   @Get()
-  @Redirect('/api')
+  @Redirect('/graphql')
   redirect(): void {}
 }
