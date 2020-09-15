@@ -1,72 +1,72 @@
 [
     {
         "id": 1,
-        "first_name": "Alisha",
-        "last_name": "Cotton",
-        "name": "acotton0",
+        "firstName": "Alisha",
+        "lastName": "Cotton",
+        "name": "alcotton0",
         "picture": "https://robohash.org/minusutet.jpg?size=50x50&set=set1"
     },
     {
         "id": 2,
-        "first_name": "Rozalie",
-        "last_name": "Drewery",
-        "name": "rdrewery1",
+        "firstName": "Rozalie",
+        "lastName": "Drewery",
+        "name": "rozdrewery101",
         "picture": "https://robohash.org/animietearum.jpg?size=50x50&set=set1"
     },
     {
         "id": 3,
-        "first_name": "Barnabas",
-        "last_name": "Fawks",
-        "name": "bfawks2",
+        "firstName": "Barnabas",
+        "lastName": "Fawks",
+        "name": "barfawks200",
         "picture": "https://robohash.org/odiodolorumalias.bmp?size=50x50&set=set1"
     },
     {
         "id": 4,
-        "first_name": "Tillie",
-        "last_name": "Loughlan",
-        "name": "tloughlan3",
+        "firstName": "Tillie",
+        "lastName": "Loughlan",
+        "name": "tloughlan301",
         "picture": "https://robohash.org/eavoluptasdebitis.jpg?size=50x50&set=set1"
     },
     {
         "id": 5,
-        "first_name": "Hewitt",
-        "last_name": "Gothrup",
-        "name": "hgothrup4",
+        "firstName": "Hewitt",
+        "lastName": "Gothrup",
+        "name": "hgothrup404",
         "picture": "https://robohash.org/eaipsumrepellat.png?size=50x50&set=set1"
     },
     {
         "id": 6,
-        "first_name": "Lotti",
-        "last_name": "Josskovitz",
-        "name": "ljosskovitz5",
+        "firstName": "Lotti",
+        "lastName": "Josskovitz",
+        "name": "lotjosskovitz522",
         "picture": "https://robohash.org/uteummollitia.jpg?size=50x50&set=set1"
     },
     {
         "id": 7,
-        "first_name": "Yank",
-        "last_name": "Jeays",
-        "name": "yjeays6",
+        "firstName": "Yank",
+        "lastName": "Jeays",
+        "name": "yjeays666",
         "picture": "https://robohash.org/totamnemoquia.jpg?size=50x50&set=set1"
     },
     {
         "id": 8,
-        "first_name": "Arni",
-        "last_name": "Coppen",
-        "name": "acoppen7",
+        "firstName": "Arni",
+        "lastName": "Coppen",
+        "name": "arcoppen007",
         "picture": "https://robohash.org/quiapraesentiumfugit.bmp?size=50x50&set=set1"
     },
     {
         "id": 9,
-        "first_name": "Vinnie",
-        "last_name": "Stansbury",
-        "name": "vstansbury8",
+        "firstName": "Vinnie",
+        "lastName": "Stansbury",
+        "name": "vistansbury800",
         "picture": "https://robohash.org/voluptateomnisdolorem.png?size=50x50&set=set1"
     },
     {
         "id": 10,
-        "first_name": "Carolynn",
-        "last_name": "Battson",
-        "name": "cbattson9",
+        "firstName": "Carolynn",
+        "lastName": "Battson",
+        "name": "carobattson999",
         "picture": "https://robohash.org/dictadistinctiominus.jpg?size=50x50&set=set1"
     }
 ]
