@@ -27,7 +27,7 @@ export class UserService {
     return of(dto).toPromise();
   }
 
-  public async getManyById(ids: Array<number>): Promise<UserDto[]> {
+  async getManyById(ids: number[]): Promise<UserDto[]> {
     return of(this.userEntityService.query((user) => ids.indexOf(+user.id) >= 0))
       .pipe(
         map((users) =>
@@ -42,7 +42,7 @@ export class UserService {
       .toPromise();
   }
 
-  public async getAll(): Promise<UserDto[]> {
+  async getAll(): Promise<UserDto[]> {
     return of(this.userEntityService.getAll())
       .pipe(
         map((users) =>

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectInMemoryDBService, InMemoryDBService } from '@nestjs-addons/in-memory-db';
 import { MessageEntity } from '../Entities';
-import { MessageDto, UserDto } from '../dtos';
+import { MessageDto } from '../dtos';
 import { MessageInput } from '../inputs';
 import { UserService } from '../services/user.service';
 import * as messagesFixture from '../../fixtures/messages.json';
@@ -65,11 +65,39 @@ export class MessageService {
     return of(dto).toPromise();
   }
 
+  async getManyById(ids: number[]): Promise<MessageDto[]> {
+    return of(this.messageEntityService.query((message) => ids.indexOf(+message.id) >= 0))
+      .pipe(map((entities) => this.formatEntityToDto(entities)))
+      .toPromise();
+  }
+
+  async getByForumId(forumId: number): Promise<MessageDto[]> {
+    return of(this.messageEntityService.query((message) => message.forumId === forumId))
+      .pipe(map((entities) => this.formatEntityToDto(entities)))
+      .toPromise();
+  }
+
   private initMessagesFixture() {
     messagesFixture.forEach(async (message) => {
       if (!(await this.getById(message.id))) {
         await this.create(message);
       }
     });
+  }
+
+  private formatEntityToDto(entities: MessageEntity[]): MessageDto[] {
+    const dtos: MessageDto[] = [];
+    entities
+      .sort((a: MessageEntity, b: MessageEntity) => {
+        return b.date - a.date;
+      })
+      .forEach(async (entity) => {
+        const messageDto = new MessageDto();
+        messageDto.date = new Date(entity.date);
+        messageDto.sender = await this.userService.getById(entity.senderId);
+        messageDto.text = entity.text;
+        dtos.push(messageDto);
+      });
+    return dtos;
   }
 }
