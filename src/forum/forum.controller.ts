@@ -1,10 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { UserService, MessageService, ForumService } from './services';
-
-import * as usersFixtures from '../fixtures/users.json';
-import * as messagesFixtures from '../fixtures/messages.json';
-import * as forumsFixtures from '../fixtures/forums.json';
+import { UserService, ForumService } from './services';
+import { MessageService } from './services/message.service';
 
 @ApiTags('Forum')
 @Controller('forum')
@@ -16,7 +13,7 @@ export class ForumController {
   ) {}
 
   @Get()
-  async findContinent(@Query('id') id: number): Promise<string[]> {
-    return [];
+  async findContinent(@Query('id') id: number): Promise<any> {
+    return await this.messageService.getById(5);
   }
 }

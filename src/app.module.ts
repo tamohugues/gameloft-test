@@ -23,7 +23,7 @@ import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
       }),
       inject: [ConfigService],
     }),
-    InMemoryDBModule,
+    InMemoryDBModule.forRoot({}),
     ForumModule,
   ],
   controllers: [AppController],
