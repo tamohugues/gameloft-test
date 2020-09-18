@@ -1,7 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { UserService, ForumService } from './services';
-import { MessageService } from './services/message.service';
+import { UserService, ForumService, MessageService } from './services';
 
 @ApiTags('Forum')
 @Controller('forum')

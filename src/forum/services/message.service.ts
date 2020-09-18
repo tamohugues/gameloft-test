@@ -37,15 +37,7 @@ export class MessageService {
     }
 
     return of(this.messageEntityService.create(entity))
-      .pipe(
-        map((message) => {
-          let dto = new MessageDto();
-          dto.date = new Date(message.date);
-          dto.text = message.text;
-          dto.sender = sender;
-          return dto;
-        }),
-      )
+      .pipe(map(async (createdEntity) => await this.formatEntityToDto(createdEntity)))
       .toPromise();
   }
 
@@ -56,48 +48,48 @@ export class MessageService {
       return undefined;
     }
 
-    const userDto = await this.userService.getById(entity.senderId);
-
-    let dto = new MessageDto();
-    dto.sender = userDto;
-    dto.text = entity.text;
-    dto.date = new Date(entity.date);
+    const dto = await this.formatEntityToDto(entity);
     return of(dto).toPromise();
   }
 
   async getManyById(ids: number[]): Promise<MessageDto[]> {
     return of(this.messageEntityService.query((message) => ids.indexOf(+message.id) >= 0))
-      .pipe(map((entities) => this.formatEntityToDto(entities)))
+      .pipe(map((entities) => this.formatArrayEntityToDto(entities)))
       .toPromise();
   }
 
   async getByForumId(forumId: number): Promise<MessageDto[]> {
     return of(this.messageEntityService.query((message) => message.forumId === forumId))
-      .pipe(map((entities) => this.formatEntityToDto(entities)))
+      .pipe(map((entities) => this.formatArrayEntityToDto(entities)))
       .toPromise();
   }
 
   private initMessagesFixture() {
-    messagesFixture.forEach(async (message) => {
-      if (!(await this.getById(message.id))) {
-        await this.create(message);
+    messagesFixture.forEach(async (fixture) => {
+      if (!(await this.getById(fixture.id))) {
+        await this.create(fixture);
       }
     });
   }
 
-  private formatEntityToDto(entities: MessageEntity[]): MessageDto[] {
+  private formatArrayEntityToDto(entities: MessageEntity[]): MessageDto[] {
     const dtos: MessageDto[] = [];
     entities
       .sort((a: MessageEntity, b: MessageEntity) => {
         return b.date - a.date;
       })
       .forEach(async (entity) => {
-        const messageDto = new MessageDto();
-        messageDto.date = new Date(entity.date);
-        messageDto.sender = await this.userService.getById(entity.senderId);
-        messageDto.text = entity.text;
-        dtos.push(messageDto);
+        const dto = await this.formatEntityToDto(entity);
+        dtos.push(dto);
       });
     return dtos;
+  }
+
+  private async formatEntityToDto(entity: MessageEntity): Promise<MessageDto> {
+    const dto = new MessageDto();
+    dto.date = new Date(entity.date);
+    dto.sender = await this.userService.getById(entity.senderId);
+    dto.text = entity.text;
+    return dto;
   }
 }
