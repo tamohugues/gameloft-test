@@ -5,6 +5,7 @@ import { UserEntity } from '../Entities';
 import * as usersFixture from '../../fixtures/users.json';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { UserInput } from '../inputs';
 
 @Injectable()
 export class UserService {
@@ -20,24 +21,13 @@ export class UserService {
     if (!entity) {
       return null;
     }
-    const dto = new UserDto();
-    dto.name = entity.name;
-    dto.picture = entity.picture;
-
-    return of(dto).toPromise();
+    return of(this.formatEntityToDto(entity)).toPromise();
   }
 
   async getManyById(ids: number[]): Promise<UserDto[]> {
     return of(this.userEntityService.query((user) => ids.indexOf(+user.id) >= 0))
       .pipe(
-        map((users) =>
-          users.map<UserDto>((x) => {
-            const userDto = new UserDto();
-            userDto.name = x.name;
-            userDto.picture = x.picture;
-            return userDto;
-          }),
-        ),
+        map((users) => users.map<UserDto>((entity) => this.formatEntityToDto(entity))),
       )
       .toPromise();
   }
@@ -45,14 +35,7 @@ export class UserService {
   async getAll(): Promise<UserDto[]> {
     return of(this.userEntityService.getAll())
       .pipe(
-        map((users) =>
-          users.map<UserDto>((x) => {
-            const dto = new UserDto();
-            dto.name = x.name;
-            dto.picture = x.picture;
-            return dto;
-          }),
-        ),
+        map((users) => users.map<UserDto>((entity) => this.formatEntityToDto(entity))),
       )
       .toPromise();
   }
@@ -63,5 +46,13 @@ export class UserService {
         this.userEntityService.create({ ...user, id: `${user.id}` });
       }
     });
+  }
+
+  private formatEntityToDto(entity: UserEntity): UserDto {
+    const dto = new UserDto();
+    dto.id = +entity.id;
+    dto.name = entity.name;
+    dto.picture = entity.picture;
+    return dto;
   }
 }

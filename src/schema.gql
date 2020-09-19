@@ -3,11 +3,13 @@
 # ------------------------------------------------------
 
 type UserDto {
-  name: ID!
+  id: ID!
+  name: String!
   picture: String!
 }
 
 type MessageDto {
+  id: ID!
   text: String!
   date: Date!
   sender: UserDto!
@@ -24,5 +26,11 @@ type ForumDto {
 }
 
 type Query {
-  Continents: [ForumDto!]!
+  JoinedForums(userId: Int!): [ForumDto!]!
+  AvailableForums(userId: Int!): [ForumDto!]!
+  Users: [UserDto!]!
+}
+
+type Mutation {
+  JoinForum(forumId: Int!, userId: Int!): Boolean!
 }

@@ -4,6 +4,9 @@ import { UserDto } from './user.dto';
 
 @ObjectType()
 export class MessageDto {
+  @Field((type) => ID)
+  id: number;
+
   @Field()
   text: string;
 

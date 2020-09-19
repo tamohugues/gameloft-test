@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UseInterceptors } from '@nestjs/common';
 import { InjectInMemoryDBService, InMemoryDBService } from '@nestjs-addons/in-memory-db';
 import { ForumEntity } from '../Entities';
 import { UserService } from '../services/user.service';
@@ -8,6 +8,7 @@ import * as forumsFixture from '../../fixtures/forums.json';
 import { ForumInput } from '../inputs';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { UserInputError } from 'apollo-server-express';
 
 @Injectable()
 export class ForumService {
@@ -17,7 +18,7 @@ export class ForumService {
     @InjectInMemoryDBService('forum')
     private readonly forumEntityService: InMemoryDBService<ForumEntity>,
   ) {
-    this.initForumsFixture();
+    this.initFixture();
   }
 
   async getById(id: number): Promise<ForumDto> {
@@ -46,7 +47,46 @@ export class ForumService {
       .toPromise();
   }
 
-  private initForumsFixture() {
+  async join(forumId: number, userId: number): Promise<boolean> {
+    const entity = this.forumEntityService.get(`${forumId}`);
+    const userDto = await this.userService.getById(userId);
+
+    if (!entity || !userDto || entity.members.indexOf(userId) >= 0) {
+      return false;
+    }
+
+    entity.members.push(userId);
+
+    this.forumEntityService.update(entity);
+
+    return true;
+  }
+
+  async getAvailable(userId: number): Promise<ForumDto[]> {
+    const user = await this.userService.getById(userId);
+
+    if (!user) {
+      return [];
+    }
+
+    return await of(this.forumEntityService.query((entity) => entity.members.indexOf(userId) < 0))
+      .pipe(map(async (entities) => await this.formatArrayEntityToDto(entities)))
+      .toPromise();
+  }
+
+  async getJoined(userId: number): Promise<ForumDto[]> {
+    const user = await this.userService.getById(userId);
+
+    if (!user) {
+      return [];
+    }
+
+    return await of(this.forumEntityService.query((entity) => entity.members.indexOf(userId) >= 0))
+      .pipe(map(async (entities) => await this.formatArrayEntityToDto(entities)))
+      .toPromise();
+  }
+
+  private initFixture() {
     forumsFixture.forEach(async (fixture) => {
       if (!(await this.getById(fixture.id))) {
         await this.create(fixture);

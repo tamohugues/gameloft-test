@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectInMemoryDBService, InMemoryDBService } from '@nestjs-addons/in-memory-db';
 import { MessageEntity } from '../Entities';
 import { MessageDto } from '../dtos';
@@ -22,7 +22,7 @@ export class MessageService {
     const sender = await this.userService.getById(input.senderId);
 
     if (!sender) {
-      throw new Error('User Id not found');
+      return undefined;
     }
 
     const entity = {
@@ -87,6 +87,7 @@ export class MessageService {
 
   private async formatEntityToDto(entity: MessageEntity): Promise<MessageDto> {
     const dto = new MessageDto();
+    dto.id = +entity.id;
     dto.date = new Date(entity.date);
     dto.sender = await this.userService.getById(entity.senderId);
     dto.text = entity.text;
