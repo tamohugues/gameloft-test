@@ -13,6 +13,6 @@ export class ForumController {
 
   @Get()
   async findContinent(@Query('id') id: number): Promise<any> {
-    return await this.messageService.getByForumId(id);
+    return await this.forumService.getById(id);
   }
 }

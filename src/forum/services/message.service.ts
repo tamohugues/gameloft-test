@@ -36,7 +36,7 @@ export class MessageService {
       entity['id'] = `${input.id}`;
     }
 
-    return of(this.messageEntityService.create(entity))
+    return await of(this.messageEntityService.create(entity))
       .pipe(map(async (createdEntity) => await this.formatEntityToDto(createdEntity)))
       .toPromise();
   }
@@ -72,7 +72,7 @@ export class MessageService {
     });
   }
 
-  private formatArrayEntityToDto(entities: MessageEntity[]): MessageDto[] {
+  private async formatArrayEntityToDto(entities: MessageEntity[]): Promise<MessageDto[]> {
     const dtos: MessageDto[] = [];
     entities
       .sort((a: MessageEntity, b: MessageEntity) => {
@@ -82,7 +82,7 @@ export class MessageService {
         const dto = await this.formatEntityToDto(entity);
         dtos.push(dto);
       });
-    return dtos;
+    return of(dtos).toPromise();
   }
 
   private async formatEntityToDto(entity: MessageEntity): Promise<MessageDto> {
@@ -90,6 +90,6 @@ export class MessageService {
     dto.date = new Date(entity.date);
     dto.sender = await this.userService.getById(entity.senderId);
     dto.text = entity.text;
-    return dto;
+    return of(dto).toPromise();
   }
 }
