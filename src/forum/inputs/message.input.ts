@@ -3,12 +3,12 @@ import { IsOptional, IsNumber, IsString, IsNotEmpty, IsDefined } from 'class-val
 
 @InputType()
 export class MessageInput {
-  @Field((type) => Int)
+  @Field((type) => Int, { nullable: true })
   @IsNumber()
   @IsOptional()
   id?: number;
 
-  @Field((type) => Int)
+  @Field((type) => Int, { nullable: true })
   @IsOptional()
   @IsNumber()
   date?: number;

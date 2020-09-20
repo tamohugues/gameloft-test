@@ -50,7 +50,7 @@ export class ForumResolver {
     input.members = [userId];
 
     const forum = await this.forumService.create(input);
-    this.pubSub.publish('recipeAdded', { recipeAdded: forum });
+    this.pubSub.publish('forumAdded', { forumAdded: forum });
     return forum;
   }
 

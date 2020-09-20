@@ -6,6 +6,7 @@ import { DateScalar } from '../common/scalars/date.scalar';
 import { ForumController } from './forum.controller';
 import { ForumResolver } from './resolvers/forum.resolver';
 import { UserResolver } from './resolvers/user.resolver';
+import { MessageResolver } from './resolvers/message.resolver';
 
 @Module({
   controllers: [ForumController],
@@ -14,6 +15,6 @@ import { UserResolver } from './resolvers/user.resolver';
     InMemoryDBModule.forFeature('message', {}),
     InMemoryDBModule.forFeature('forum', {}),
   ],
-  providers: [DateScalar, MessageService, UserService, ForumService, UserResolver, ForumResolver],
+  providers: [DateScalar, MessageService, UserService, ForumService, UserResolver, ForumResolver, MessageResolver],
 })
 export class ForumModule {}
