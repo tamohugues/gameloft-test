@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/grap
 import { PubSub, UserInputError } from 'apollo-server-express';
 import { ForumService, UserService } from '../services';
 import { Forum } from '../dtos';
-import { ForumInput } from '../inputs';
+import { ForumInput, CreateForumInput } from '../inputs';
 
 @Resolver((of) => Forum)
 export class ForumResolver {
@@ -36,20 +36,18 @@ export class ForumResolver {
   }
 
   @Mutation((returns) => Forum)
-  async createForum(
-    @Args('name', { type: () => String }) name: string,
-    @Args('userId', { type: () => Int }) userId: number,
-  ) {
-    const user = await this.userService.getById(userId);
+  async createForum(@Args('input', { type: () => CreateForumInput }) input: CreateForumInput) {
+    const user = await this.userService.getById(input.userId);
     if (!user) {
       throw new UserInputError('This user id not found.');
     }
 
-    const input = new ForumInput();
-    input.name = name;
-    input.members = [userId];
+    const inputParam = new ForumInput();
+    inputParam.name = input.name;
+    inputParam.members = [input.userId];
+    inputParam.isPrivate = input.isPrivate ?? false;
 
-    const forum = await this.forumService.create(input);
+    const forum = await this.forumService.create(inputParam);
     this.pubSub.publish('forumAdded', { forumAdded: forum });
     return forum;
   }

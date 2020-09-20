@@ -35,6 +35,11 @@ $ npm run start:prod
 
 ```bash
 directive @specifiedBy(url: String!) on SCALAR
+input CreateForumInput {
+  name: String!
+  userId: Int!
+}
+
 scalar Date
 
 type Forum {
@@ -60,7 +65,7 @@ input MessageInput {
 }
 
 type Mutation {
-  createForum(userId: Int!, name: String!): Forum!
+  createForum(input: CreateForumInput!): Forum!
   joinForum(forumId: Int!, userId: Int!): Boolean!
   createMessage(input: MessageInput!): Message!
 }
@@ -81,4 +86,5 @@ type User {
   name: String!
   picture: String!
 }
+
 ```

@@ -37,6 +37,7 @@ export class ForumService {
     const entity = {
       name: input.name,
       members: input.members,
+      isPrivate: input.isPrivate,
     };
 
     if (input.id) {
@@ -45,6 +46,10 @@ export class ForumService {
     } else {
       this.nextId++;
       entity['id'] = `${this.nextId}`;
+    }
+
+    if (input.isPrivate) {
+      entity['adminId'] = input.members[0];
     }
 
     return await of(this.forumEntityService.create(entity))
@@ -66,7 +71,7 @@ export class ForumService {
   }
 
   async getAvailable(userId: number): Promise<Forum[]> {
-    return await of(this.forumEntityService.query((entity) => entity.members.indexOf(userId) < 0))
+    return await of(this.forumEntityService.query((entity) => entity.members.indexOf(userId) < 0 && !entity.isPrivate))
       .pipe(map(async (entities) => await this.formatArrayEntityToDto(entities)))
       .toPromise();
   }
@@ -80,7 +85,7 @@ export class ForumService {
   private initFixture() {
     forumsFixture.forEach(async (fixture) => {
       if (!(await this.getById(fixture.id))) {
-        await this.create(fixture);
+        await this.create({ ...fixture, isPrivate: false });
       }
     });
   }

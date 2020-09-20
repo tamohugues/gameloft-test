@@ -32,9 +32,15 @@ type Query {
 }
 
 type Mutation {
-  createForum(userId: Int!, name: String!): Forum!
+  createForum(input: CreateForumInput!): Forum!
   joinForum(forumId: Int!, userId: Int!): Boolean!
   createMessage(input: MessageInput!): Message!
+}
+
+input CreateForumInput {
+  name: String!
+  userId: Int!
+  isPrivate: Boolean
 }
 
 input MessageInput {
