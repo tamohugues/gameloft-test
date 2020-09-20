@@ -1,19 +1,19 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
-import { MessageDto } from './message.dto';
-import { UserDto } from './user.dto';
+import { Message } from './message.dto';
+import { User } from './user.dto';
 
 @ObjectType()
-export class ForumDto {
+export class Forum {
   @Field((type) => ID)
   id: number;
 
   @Field()
   name: string;
 
-  @Field((type) => [UserDto])
-  members: Array<UserDto>;
+  @Field((type) => [User])
+  members: Array<User>;
 
-  @Field((type) => [MessageDto], { nullable: true })
-  messages?: Array<MessageDto>;
+  @Field((type) => [Message], { nullable: true })
+  messages?: Array<Message>;
 }

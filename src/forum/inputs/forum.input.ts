@@ -1,9 +1,9 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsOptional, IsNumber, IsString, IsNotEmpty, IsDefined, IsArray } from 'class-validator';
+import { IsOptional, IsNumber, IsString, IsNotEmpty, IsArray } from 'class-validator';
 
 @InputType()
 export class ForumInput {
-  @Field((type) => Int)
+  @Field((type) => Int, { nullable: true })
   @IsNumber()
   @IsOptional()
   id?: number;
@@ -15,6 +15,5 @@ export class ForumInput {
 
   @Field((type) => [Int])
   @IsArray()
-  @IsDefined()
   members: Array<number>;
 }

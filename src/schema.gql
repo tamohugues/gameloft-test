@@ -2,35 +2,40 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UserDto {
+type User {
   id: ID!
   name: String!
   picture: String!
 }
 
-type MessageDto {
+type Message {
   id: ID!
   text: String!
   date: Date!
-  sender: UserDto!
+  sender: User!
 }
 
 """Date custom scalar type"""
 scalar Date
 
-type ForumDto {
+type Forum {
   id: ID!
   name: String!
-  members: [UserDto!]!
-  messages: [MessageDto!]
+  members: [User!]!
+  messages: [Message!]
 }
 
 type Query {
-  JoinedForums(userId: Int!): [ForumDto!]!
-  AvailableForums(userId: Int!): [ForumDto!]!
-  Users: [UserDto!]!
+  joinedForums(userId: Int!): [Forum!]!
+  availableForums(userId: Int!): [Forum!]!
+  Users: [User!]!
 }
 
 type Mutation {
-  JoinForum(forumId: Int!, userId: Int!): Boolean!
+  createForum(userId: Int!, name: String!): Forum!
+  joinForum(forumId: Int!, userId: Int!): Boolean!
+}
+
+type Subscription {
+  forumAdded: Forum!
 }

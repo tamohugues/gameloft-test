@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectInMemoryDBService, InMemoryDBService } from '@nestjs-addons/in-memory-db';
 import { MessageEntity } from '../Entities';
-import { MessageDto } from '../dtos';
+import { Message } from '../dtos';
 import { MessageInput } from '../inputs';
 import { UserService } from '../services/user.service';
 import * as messagesFixture from '../../fixtures/messages.json';
@@ -10,21 +10,17 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class MessageService {
+  private nextId: number = 0;
+
   constructor(
     private readonly userService: UserService,
     @InjectInMemoryDBService('message')
     private readonly messageEntityService: InMemoryDBService<MessageEntity>,
   ) {
-    this.initMessagesFixture();
+    this.initFixture();
   }
 
-  async create(input: MessageInput): Promise<MessageDto> {
-    const sender = await this.userService.getById(input.senderId);
-
-    if (!sender) {
-      return undefined;
-    }
-
+  async create(input: MessageInput): Promise<Message> {
     const entity = {
       text: input.text,
       senderId: input.senderId,
@@ -33,7 +29,11 @@ export class MessageService {
     };
 
     if (input.id) {
+      this.nextId = input.id;
       entity['id'] = `${input.id}`;
+    } else {
+      this.nextId++;
+      entity['id'] = `${this.nextId}`;
     }
 
     return await of(this.messageEntityService.create(entity))
@@ -41,7 +41,7 @@ export class MessageService {
       .toPromise();
   }
 
-  async getById(id: number): Promise<MessageDto> {
+  async getById(id: number): Promise<Message> {
     const entity = this.messageEntityService.get(`${id}`);
 
     if (!entity) {
@@ -52,19 +52,19 @@ export class MessageService {
     return of(dto).toPromise();
   }
 
-  async getManyById(ids: number[]): Promise<MessageDto[]> {
+  async getManyById(ids: number[]): Promise<Message[]> {
     return of(this.messageEntityService.query((message) => ids.indexOf(+message.id) >= 0))
       .pipe(map((entities) => this.formatArrayEntityToDto(entities)))
       .toPromise();
   }
 
-  async getByForumId(forumId: number): Promise<MessageDto[]> {
+  async getByForumId(forumId: number): Promise<Message[]> {
     return of(this.messageEntityService.query((message) => message.forumId === forumId))
       .pipe(map((entities) => this.formatArrayEntityToDto(entities)))
       .toPromise();
   }
 
-  private initMessagesFixture() {
+  private initFixture() {
     messagesFixture.forEach(async (fixture) => {
       if (!(await this.getById(fixture.id))) {
         await this.create(fixture);
@@ -72,8 +72,8 @@ export class MessageService {
     });
   }
 
-  private async formatArrayEntityToDto(entities: MessageEntity[]): Promise<MessageDto[]> {
-    const dtos: MessageDto[] = [];
+  private async formatArrayEntityToDto(entities: MessageEntity[]): Promise<Message[]> {
+    const dtos: Message[] = [];
     entities
       .sort((a: MessageEntity, b: MessageEntity) => {
         return b.date - a.date;
@@ -85,8 +85,8 @@ export class MessageService {
     return of(dtos).toPromise();
   }
 
-  private async formatEntityToDto(entity: MessageEntity): Promise<MessageDto> {
-    const dto = new MessageDto();
+  private async formatEntityToDto(entity: MessageEntity): Promise<Message> {
+    const dto = new Message();
     dto.id = +entity.id;
     dto.date = new Date(entity.date);
     dto.sender = await this.userService.getById(entity.senderId);

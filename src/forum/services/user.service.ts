@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectInMemoryDBService, InMemoryDBService } from '@nestjs-addons/in-memory-db';
-import { UserDto } from '../dtos';
+import { User } from '../dtos';
 import { UserEntity } from '../Entities';
 import * as usersFixture from '../../fixtures/users.json';
 import { of } from 'rxjs';
@@ -13,34 +13,34 @@ export class UserService {
     @InjectInMemoryDBService('user')
     private readonly userEntityService: InMemoryDBService<UserEntity>,
   ) {
-    this.initUsersFixture();
+    this.initFixture();
   }
 
-  public async getById(id: number): Promise<UserDto> {
+  public async getById(id: number): Promise<User> {
     const entity = this.userEntityService.get(`${id}`);
     if (!entity) {
-      return null;
+      return undefined;
     }
     return of(this.formatEntityToDto(entity)).toPromise();
   }
 
-  async getManyById(ids: number[]): Promise<UserDto[]> {
+  async getManyById(ids: number[]): Promise<User[]> {
     return of(this.userEntityService.query((user) => ids.indexOf(+user.id) >= 0))
       .pipe(
-        map((users) => users.map<UserDto>((entity) => this.formatEntityToDto(entity))),
+        map((users) => users.map<User>((entity) => this.formatEntityToDto(entity))),
       )
       .toPromise();
   }
 
-  async getAll(): Promise<UserDto[]> {
+  async getAll(): Promise<User[]> {
     return of(this.userEntityService.getAll())
       .pipe(
-        map((users) => users.map<UserDto>((entity) => this.formatEntityToDto(entity))),
+        map((users) => users.map<User>((entity) => this.formatEntityToDto(entity))),
       )
       .toPromise();
   }
 
-  async initUsersFixture() {
+  async initFixture() {
     usersFixture.forEach(async (user) => {
       if (!(await this.getById(user.id))) {
         this.userEntityService.create({ ...user, id: `${user.id}` });
@@ -48,8 +48,8 @@ export class UserService {
     });
   }
 
-  private formatEntityToDto(entity: UserEntity): UserDto {
-    const dto = new UserDto();
+  private formatEntityToDto(entity: UserEntity): User {
+    const dto = new User();
     dto.id = +entity.id;
     dto.name = entity.name;
     dto.picture = entity.picture;

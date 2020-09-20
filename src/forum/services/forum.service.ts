@@ -1,17 +1,18 @@
-import { HttpException, HttpStatus, Injectable, UseInterceptors } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectInMemoryDBService, InMemoryDBService } from '@nestjs-addons/in-memory-db';
 import { ForumEntity } from '../Entities';
 import { UserService } from '../services/user.service';
 import { MessageService } from '../services/message.service';
-import { ForumDto } from '../dtos';
+import { Forum } from '../dtos';
 import * as forumsFixture from '../../fixtures/forums.json';
 import { ForumInput } from '../inputs';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UserInputError } from 'apollo-server-express';
 
 @Injectable()
 export class ForumService {
+  private nextId: number = 0;
+
   constructor(
     private readonly userService: UserService,
     private readonly messageService: MessageService,
@@ -21,7 +22,7 @@ export class ForumService {
     this.initFixture();
   }
 
-  async getById(id: number): Promise<ForumDto> {
+  async getById(id: number): Promise<Forum> {
     const entity = this.forumEntityService.get(`${id}`);
 
     if (!entity) {
@@ -32,14 +33,18 @@ export class ForumService {
     return of(dto).toPromise();
   }
 
-  async create(input: ForumInput): Promise<ForumDto> {
+  async create(input: ForumInput): Promise<Forum> {
     const entity = {
       name: input.name,
       members: input.members,
     };
 
     if (input.id) {
+      this.nextId = input.id;
       entity['id'] = `${input.id}`;
+    } else {
+      this.nextId++;
+      entity['id'] = `${this.nextId}`;
     }
 
     return await of(this.forumEntityService.create(entity))
@@ -49,38 +54,24 @@ export class ForumService {
 
   async join(forumId: number, userId: number): Promise<boolean> {
     const entity = this.forumEntityService.get(`${forumId}`);
-    const userDto = await this.userService.getById(userId);
 
-    if (!entity || !userDto || entity.members.indexOf(userId) >= 0) {
+    if (entity.members.indexOf(userId) >= 0) {
       return false;
     }
 
     entity.members.push(userId);
-
     this.forumEntityService.update(entity);
 
     return true;
   }
 
-  async getAvailable(userId: number): Promise<ForumDto[]> {
-    const user = await this.userService.getById(userId);
-
-    if (!user) {
-      return [];
-    }
-
+  async getAvailable(userId: number): Promise<Forum[]> {
     return await of(this.forumEntityService.query((entity) => entity.members.indexOf(userId) < 0))
       .pipe(map(async (entities) => await this.formatArrayEntityToDto(entities)))
       .toPromise();
   }
 
-  async getJoined(userId: number): Promise<ForumDto[]> {
-    const user = await this.userService.getById(userId);
-
-    if (!user) {
-      return [];
-    }
-
+  async getJoined(userId: number): Promise<Forum[]> {
     return await of(this.forumEntityService.query((entity) => entity.members.indexOf(userId) >= 0))
       .pipe(map(async (entities) => await this.formatArrayEntityToDto(entities)))
       .toPromise();
@@ -94,8 +85,8 @@ export class ForumService {
     });
   }
 
-  private async formatArrayEntityToDto(entities: ForumEntity[]): Promise<ForumDto[]> {
-    const dtos: ForumDto[] = [];
+  private async formatArrayEntityToDto(entities: ForumEntity[]): Promise<Forum[]> {
+    const dtos: Forum[] = [];
     entities.forEach(async (entity) => {
       const dto = await this.formatEntityToDto(entity);
       dtos.push(dto);
@@ -103,8 +94,8 @@ export class ForumService {
     return of(dtos).toPromise();
   }
 
-  private async formatEntityToDto(entity: ForumEntity): Promise<ForumDto> {
-    const dto = new ForumDto();
+  private async formatEntityToDto(entity: ForumEntity): Promise<Forum> {
+    const dto = new Forum();
     dto.id = +entity.id;
     dto.name = entity.name;
     dto.members = await this.userService.getManyById(entity.members);

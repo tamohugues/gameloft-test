@@ -1,9 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
-import { UserDto } from './user.dto';
+import { User } from './user.dto';
 
 @ObjectType()
-export class MessageDto {
+export class Message {
   @Field((type) => ID)
   id: number;
 
@@ -13,6 +13,6 @@ export class MessageDto {
   @Field((type) => Date)
   date: Date;
 
-  @Field((type) => UserDto)
-  sender: UserDto;
+  @Field((type) => User)
+  sender: User;
 }
