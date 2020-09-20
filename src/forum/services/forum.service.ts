@@ -105,6 +105,8 @@ export class ForumService {
     dto.name = entity.name;
     dto.members = await this.userService.getManyById(entity.members);
     dto.messages = await this.messageService.getByForumId(dto.id);
+    dto.isPrivate = entity.isPrivate;
+    dto.adminId = entity.adminId;
     return of(dto).toPromise();
   }
 }

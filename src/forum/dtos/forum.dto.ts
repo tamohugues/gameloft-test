@@ -16,4 +16,8 @@ export class Forum {
 
   @Field((type) => [Message], { nullable: true })
   messages?: Array<Message>;
+
+  isPrivate: boolean;
+
+  adminId?: number;
 }

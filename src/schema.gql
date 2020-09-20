@@ -25,16 +25,25 @@ type Forum {
   messages: [Message!]
 }
 
+type Request {
+  id: ID!
+  senderId: Int!
+  forumId: Int!
+}
+
 type Query {
   joinedForums(userId: Int!): [Forum!]!
   availableForums(userId: Int!): [Forum!]!
   Users: [User!]!
+  availableRequests(adminId: Int!): [Request!]!
 }
 
 type Mutation {
   createForum(input: CreateForumInput!): Forum!
   joinForum(forumId: Int!, userId: Int!): Boolean!
   createMessage(input: MessageInput!): Message!
+  createRequest(input: CreateRequestInput!): Request!
+  closeRequest(input: CloseRequestInput!): Boolean!
 }
 
 input CreateForumInput {
@@ -51,7 +60,18 @@ input MessageInput {
   forumId: Int!
 }
 
+input CreateRequestInput {
+  senderId: Int!
+  forumId: Int!
+}
+
+input CloseRequestInput {
+  requestId: Int!
+  isAccepted: Boolean!
+}
+
 type Subscription {
   forumAdded: Forum!
   messageAdded: Message!
+  RequestAdded: Request!
 }
